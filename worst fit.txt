@@ -1,0 +1,55 @@
+#include <iostream>
+
+using namespace std;
+
+struct MemoryBlock {
+    int blockId;
+    int size;
+    bool allocated;
+};
+
+int main() {
+    int n, m;
+    cout << "Enter the number of memory blocks: ";
+    cin >> n;
+
+    MemoryBlock memory[n];
+
+    for (int i = 0; i < n; i++) {
+        memory[i].blockId = i + 1;
+        cout << "Enter the size of Memory Block " << memory[i].blockId << ": ";
+        cin >> memory[i].size;
+        memory[i].allocated = false;
+    }
+
+    cout << "Enter the number of processes: ";
+    cin >> m;
+
+    for (int i = 0; i < m; i++) {
+        int processSize;
+        cout << "Enter the size of Process " << (i + 1) << ": ";
+        cin >> processSize;
+
+        int worstFitBlock = -1;
+        int maxAvailableSize = -1; // Initialize with a value that represents no match
+
+        for (int j = 0; j < n; j++) {
+            if (!memory[j].allocated && memory[j].size >= processSize) {
+                int availableSize = memory[j].size;
+                if (worstFitBlock == -1 || availableSize > maxAvailableSize) {
+                    maxAvailableSize = availableSize;
+                    worstFitBlock = j;
+                }
+            }
+        }
+
+        if (worstFitBlock != -1) {
+            memory[worstFitBlock].allocated = true;
+            cout << "Allocated Process " << (i + 1) << " to Memory Block " << memory[worstFitBlock].blockId << endl;
+        } else {
+            cout << "Process " << (i + 1) << " could not be allocated to any Memory Block." << endl;
+        }
+    }
+
+    return 0;
+}

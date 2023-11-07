@@ -1,0 +1,55 @@
+#include <iostream>
+
+using namespace std;
+
+struct MemoryBlock {
+    int blockId;
+    int size;
+    bool allocated;
+};
+
+int main() {
+    int n, m;
+    cout << "Enter the number of memory blocks: ";
+    cin >> n;
+
+    MemoryBlock memory[n];
+
+    for (int i = 0; i < n; i++) {
+        memory[i].blockId = i + 1;
+        cout << "Enter the size of Memory Block " << memory[i].blockId << ": ";
+        cin >> memory[i].size;
+        memory[i].allocated = false;
+    }
+
+    cout << "Enter the number of processes: ";
+    cin >> m;
+
+    int currentBlockIndex = 0; // Keep track of the current block to start the next fit
+
+    for (int i = 0; i < m; i++) {
+        int processSize;
+        cout << "Enter the size of Process " << (i + 1) << ": ";
+        cin >> processSize;
+
+        int allocatedBlock = -1;
+
+        for (int j = 0; j < n; j++) {
+            int blockIndex = (currentBlockIndex + j) % n; // Use modulo to wrap around the array
+            if (!memory[blockIndex].allocated && memory[blockIndex].size >= processSize) {
+                memory[blockIndex].allocated = true;
+                allocatedBlock = blockIndex;
+                currentBlockIndex = blockIndex; // Update the current block index
+                break;
+            }
+        }
+
+        if (allocatedBlock != -1) {
+            cout << "Allocated Process " << (i + 1) << " to Memory Block " << memory[allocatedBlock].blockId << endl;
+        } else {
+            cout << "Process " << (i + 1) << " could not be allocated to any Memory Block." << endl;
+        }
+    }
+
+    return 0;
+}

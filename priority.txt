@@ -1,0 +1,77 @@
+#include <iostream>
+
+using namespace std;
+
+struct Process {
+    int processId;
+    int arrivalTime;
+    int burstTime;
+    int priority;
+};
+
+int main() {
+    int n;
+    cout << "Enter the number of processes: ";
+    cin >> n;
+
+    Process processes[n];
+
+    for (int i = 0; i < n; i++) {
+        processes[i].processId = i + 1;
+        cout << "Enter arrival time for Process " << processes[i].processId << ": ";
+        cin >> processes[i].arrivalTime;
+        cout << "Enter burst time for Process " << processes[i].processId << ": ";
+        cin >> processes[i].burstTime;
+        cout << "Enter priority for Process " << processes[i].processId << ": ";
+        cin >> processes[i].priority;
+    }
+
+    int currentTime = 0;
+    double totalWaitingTime = 0;
+    double totalTurnaroundTime = 0;
+
+    cout << "Process\tArrival Time\tBurst Time\tPriority\tWaiting Time\tTurnaround Time\n";
+    bool completed[n] = {0}; // To track completed processes
+
+    for (int i = 0; i < n; i++) {
+        int highestPriority = -1;
+        int highestPriorityProcess = -1;
+
+        for (int j = 0; j < n; j++) {
+            if (!completed[j] && processes[j].arrivalTime <= currentTime) {
+                if (highestPriority == -1 || processes[j].priority < highestPriority) {
+                    highestPriority = processes[j].priority;
+                    highestPriorityProcess = j;
+                }
+            }
+        }
+
+        if (highestPriorityProcess == -1) {
+            currentTime++;
+        } else {
+            int processIndex = highestPriorityProcess;
+            completed[processIndex] = true;
+
+            int waitingTime = currentTime - processes[processIndex].arrivalTime;
+            int turnaroundTime = waitingTime + processes[processIndex].burstTime;
+
+            totalWaitingTime += waitingTime;
+            totalTurnaroundTime += turnaroundTime;
+
+            cout << processes[processIndex].processId << "\t\t" << processes[processIndex].arrivalTime << "\t\t"
+                 << processes[processIndex].burstTime << "\t\t" << processes[processIndex].priority << "\t\t"
+                 << waitingTime << "\t\t" << turnaroundTime << endl;
+
+            currentTime += processes[processIndex].burstTime;
+        }
+    }
+
+    double averageWaitingTime = totalWaitingTime / n;
+    double averageTurnaroundTime = totalTurnaroundTime / n;
+
+    cout << "Average Waiting Time: " << averageWaitingTime << endl;
+    cout << "Average Turnaround Time: " << averageTurnaroundTime << endl;
+
+    return 0;
+}
+

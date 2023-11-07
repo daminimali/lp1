@@ -1,0 +1,54 @@
+#include <iostream>
+
+using namespace std;
+
+struct Process {
+    int processId;
+    int arrivalTime;
+    int burstTime;
+};
+
+int main() {
+    int n;
+    cout << "Enter the number of processes: ";
+    cin >> n;
+
+    Process processes[n];
+
+    for (int i = 0; i < n; i++) {
+        processes[i].processId = i + 1;
+        cout << "Enter arrival time for Process " << processes[i].processId << ": ";
+        cin >> processes[i].arrivalTime;
+        cout << "Enter burst time for Process " << processes[i].processId << ": ";
+        cin >> processes[i].burstTime;
+    }
+
+    int currentTime = 0;
+    double totalWaitingTime = 0;
+    double totalTurnaroundTime = 0;
+
+    cout << "Process\tArrival Time\tBurst Time\tWaiting Time\tTurnaround Time\n";
+    for (int i = 0; i < n; i++) {
+        if (currentTime < processes[i].arrivalTime) {
+            currentTime = processes[i].arrivalTime;
+        }
+
+        int waitingTime = currentTime - processes[i].arrivalTime;
+        int turnaroundTime = waitingTime + processes[i].burstTime;
+
+        totalWaitingTime += waitingTime;
+        totalTurnaroundTime += turnaroundTime;
+
+        cout << processes[i].processId << "\t\t" << processes[i].arrivalTime << "\t\t" << processes[i].burstTime << "\t\t" << waitingTime << "\t\t" << turnaroundTime << endl;
+
+        currentTime += processes[i].burstTime;
+    }
+
+    double averageWaitingTime = totalWaitingTime / n;
+    double averageTurnaroundTime = totalTurnaroundTime / n;
+
+    cout << "Average Waiting Time: " << averageWaitingTime << endl;
+    cout << "Average Turnaround Time: " << averageTurnaroundTime << endl;
+
+    return 0;
+}
